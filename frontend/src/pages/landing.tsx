@@ -1,25 +1,32 @@
-import axios from "axios";
 import { useState } from "react";
+import { encryptSeed } from "../lib/seed";
 import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
+  const [username,setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [mnemonic, setMnemonic] = useState([])
+  const [mnemonic, setMnemonic] = useState<String[]>([])
   const [state, setState] = useState(0)
-  const navigate = useNavigate()
+  const navigate  = useNavigate()
 
   async function generateWallet() {
-    if (!password || !confirmPassword || password != confirmPassword) {
-      alert('password is missing or not matching')
+    if (!password || !confirmPassword || password != confirmPassword || !username) {
+      alert('username or password is missing or not matching')
       return
     }
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/generate`, {
-      password
-    })
-    localStorage.setItem('seed', res.data.encrypt)
-    setMnemonic((res.data.mnemonic).split(' '))
+    const data = await encryptSeed(password,username)
+    setMnemonic(data.split(' '))
     setState(1)
+  }
+
+  function nextfn(){
+      navigate('/dashboard',{
+        state : {
+          username,
+          password
+        }
+      })
   }
 
   return (
@@ -41,6 +48,19 @@ export default function Landing() {
 
         {state === 0 && <>
           <div className="space-y-6">
+
+            <div className="space-y-2">
+              <label className="text-sm text-gray-600">
+                Username
+              </label>
+              <input
+                type="text"
+                placeholder="Enter Username"
+                defaultValue={username}
+                onChange={e => setUsername(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition"
+              />
+            </div>
 
             <div className="space-y-2">
               <label className="text-sm text-gray-600">
