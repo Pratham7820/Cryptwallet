@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { encryptSeed } from "../lib/seed";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Landing() {
   const [username,setUsername] = useState("")
@@ -45,7 +45,7 @@ export default function Landing() {
             Secure self-custody access
           </p>
         </div>
-
+        <Link to="/login">Login</Link>
         {state === 0 && <>
           <div className="space-y-6">
 

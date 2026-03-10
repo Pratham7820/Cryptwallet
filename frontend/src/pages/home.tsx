@@ -20,6 +20,7 @@ export default function Home({ username, password,handleAccount }: { username: s
             const value = await db.getAll('accounts')
             if (value.length === 0) {
                 const res = await addAcc(password, username, '0')
+                if(res===undefined) return
                 setAccounts([res])
                 setAccount(res)
             }
@@ -39,6 +40,7 @@ export default function Home({ username, password,handleAccount }: { username: s
     async function addAccount() {
         const index = accounts.length
         const res = await addAcc(password, username, index.toString())
+        if(res===undefined) return
         setAccounts(prev => [
             ...prev,
             res
