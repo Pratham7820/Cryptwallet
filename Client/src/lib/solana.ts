@@ -3,6 +3,7 @@ import { derivePath } from "ed25519-hd-key"
 import nacl  from "tweetnacl"
 import { Keypair } from "@solana/web3.js";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction, SystemProgram, Transaction } from "@solana/web3.js";
+import { decryption } from "./encryption";
 
 const connection = new Connection(import.meta.env.VITE_SOLRPC_URL)
 
@@ -42,4 +43,8 @@ export async function sendSol(sender:solSender,address:PublicKey,amount:number){
     const transaction = new Transaction().add(tx)
     const signature = await sendAndConfirmTransaction(connection,transaction,[sender])
     return {msg: "transactioin successfull",signature}
+}
+
+export async function solSwap(sender,password:string){
+    const secret = decryption(password,data)
 }

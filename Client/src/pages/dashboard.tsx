@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Home from "./home"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import Transfer from "./transfer"
+import { Swap } from "./swap"
 
 export interface Account{
     accountId : string,
@@ -23,8 +24,15 @@ export default function Dashboard() {
     const [state,setState] = useState(0)
     const [selectedAccount,setSelectedAccount] = useState<Account | null>()
     const location = useLocation()
-    const username = location.state.username
-    const password = location.state.password
+    const username = location.state?.username
+    const password = location.state?.password
+    const navigate = useNavigate()
+
+    useEffect(()=>{
+        if(!username || !password){
+            navigate("/")
+        }
+    },[])
 
     const getAccount = (account:Account | null) => {
         console.log(account)
@@ -45,6 +53,9 @@ export default function Dashboard() {
                 }
                 {state===1 && selectedAccount && 
                     <Transfer account = {selectedAccount} password={password}/>
+                }
+                {state===2 && selectedAccount && 
+                    <Swap account = {selectedAccount} password={password} />
                 }
             </div>
         </div>
