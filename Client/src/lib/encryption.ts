@@ -1,4 +1,4 @@
-export async function encryption(password: string, msg: string) : Promise<Data> {
+export async function encryption(password: string, msg: Uint8Array<ArrayBuffer>) : Promise<Data> {
     const encoder = new TextEncoder()
     const passwordKey = await crypto.subtle.importKey(
         "raw",
@@ -28,7 +28,7 @@ export async function encryption(password: string, msg: string) : Promise<Data> 
             iv
         },
         key,
-        encoder.encode(msg)
+        msg
     );
     return {
         encrypted,
@@ -73,7 +73,5 @@ export async function decryption(password:string,data:Data) {
         key,
         encrypt
     )
-    const decoder = new TextDecoder()
-    const msg = decoder.decode(decrypt)
-    return msg
+    return new Uint8Array(decrypt)
 }

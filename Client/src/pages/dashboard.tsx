@@ -22,7 +22,7 @@ export interface Account{
 
 export default function Dashboard() {
     const [state,setState] = useState(0)
-    const [selectedAccount,setSelectedAccount] = useState<Account | null>()
+    const [selectedAccount,setSelectedAccount] = useState<Account | null>(null)
     const location = useLocation()
     const username = location.state?.username
     const password = location.state?.password
@@ -35,28 +35,63 @@ export default function Dashboard() {
     },[])
 
     const getAccount = (account:Account | null) => {
-        console.log(account)
         setSelectedAccount(account)
     }
 
+    const menu = ["Home","Transfer","Swap","History"]
+
     return (
-        <div className="grid grid-cols-5 h-screen">
-            <div className="rounded-lg bg-gray-200 space-y-10 text-xl font-semibold pt-20">
-                <h2 onClick={()=>setState(0)} className="hover:bg-blue-300 mx-2 p-3 rounded-lg ">Home</h2>
-                <h2 onClick={()=>setState(1)} className="hover:bg-blue-300 mx-2 p-3 rounded-lg ">Transfer</h2>
-                <h2 onClick={()=>setState(2)} className="hover:bg-blue-300 mx-2 p-3 rounded-lg ">Swap</h2>
-                <h2 onClick={()=>setState(3)} className="hover:bg-blue-300 mx-2 p-3 rounded-lg ">History</h2>
+        <div className="h-screen flex bg-gray-50">
+
+            {/* Sidebar */}
+            <div className="w-64 bg-white border-r border-gray-200 flex flex-col justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold p-6 text-black">Wallet</h1>
+
+                    <div className="space-y-2 px-3">
+                        {menu.map((item,index)=> (
+                            <div
+                                key={index}
+                                onClick={()=>setState(index)}
+                                className={`cursor-pointer px-4 py-3 rounded-lg transition-all duration-200 text-sm
+                                    ${state===index 
+                                        ? "bg-black text-white" 
+                                        : "hover:bg-gray-100 text-gray-700"}`}
+                            >
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="p-4 text-sm text-gray-500 border-t">
+                    Logged in as <span className="font-semibold text-black">{username}</span>
+                </div>
             </div>
-            <div className="grid col-span-4 pl-3">
-                {state===0 && 
-                    <Home username={username} password={password} handleAccount={getAccount} />
-                }
-                {state===1 && selectedAccount && 
-                    <Transfer account = {selectedAccount} password={password}/>
-                }
-                {state===2 && selectedAccount && 
-                    <Swap account = {selectedAccount} password={password} />
-                }
+
+            {/* Main Content */}
+            <div className="flex-1 p-6 overflow-y-auto">
+                <div className="bg-white rounded-2xl border border-gray-200 p-6 h-full">
+
+                    {state===0 && 
+                        <Home username={username} password={password} handleAccount={getAccount} />
+                    }
+
+                    {state===1 && selectedAccount && 
+                        <Transfer account = {selectedAccount} password={password}/>
+                    }
+
+                    {state===2 && selectedAccount && 
+                        <Swap sender = {selectedAccount} password={password} />
+                    }
+
+                    {state===3 && (
+                        <div className="text-gray-500 text-center mt-20 text-sm">
+                            Transaction History Coming Soon...
+                        </div>
+                    )}
+
+                </div>
             </div>
         </div>
     )

@@ -8,7 +8,7 @@ export async function addEthAcc(mnemonic:string,num:string){
     const seed = mnemonicToSeedSync(mnemonic)
     const wallet = HDNodeWallet.fromSeed(seed)
     const value = wallet.derivePath(`m/44'/60'/0'/0/${num}`)
-    const ethSecretKey = value.privateKey
+    const ethSecretKey = new Uint8Array(value.privateKey.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
     const ethPublicKey = value.address
     return {
         ethPublicKey,
@@ -23,7 +23,6 @@ interface ethSender{
 
 export async function getEthBalance(address:string){
     const balance = formatEther(await provider.getBalance(address))
-    console.log(balance)
     return Number(balance)
 }
 

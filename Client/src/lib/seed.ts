@@ -7,7 +7,9 @@ import bcrypt from "bcryptjs"
 
 export async function encryptSeed(password: string, username: string) {
     const mnemonic = generateMnemonic()
-    const value = await encryption(password, mnemonic);
+    const encoder = new TextEncoder()
+    const seed = encoder.encode(mnemonic)
+    const value = await encryption(password, seed);
     const hashPassword = await bcrypt.hash(password,10);
     (db).add('seed', {
         username,
@@ -21,12 +23,13 @@ export async function encryptSeed(password: string, username: string) {
 
 export async function decryptSeed(password: string, username: string) {
     const value = await db.get('seed', username)
+    const decoder = new TextDecoder()
     const compare = await bcrypt.compare(password,value.hashPassword)
     if(compare===false){
         return null;
     }
     const res = await decryption(password, value)
-    return res
+    return decoder.decode(res)
 }
 
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { encryptSeed } from "../lib/seed";
 import { Link, useNavigate } from "react-router-dom";
+import { db } from "../lib/db";
 
 export default function Landing() {
   const [username,setUsername] = useState("")
@@ -14,6 +15,11 @@ export default function Landing() {
     if (!password || !confirmPassword || password != confirmPassword || !username) {
       alert('username or password is missing or not matching')
       return
+    }
+    const val = await db.getAll('seed')
+    if(val.length > 0){
+      alert('already exist a wallet please login')
+      return 
     }
     const data = await encryptSeed(password,username)
     setMnemonic(data.split(' '))
@@ -45,7 +51,6 @@ export default function Landing() {
             Secure self-custody access
           </p>
         </div>
-        <Link to="/login">Login</Link>
         {state === 0 && <>
           <div className="space-y-6">
 
@@ -98,9 +103,9 @@ export default function Landing() {
               <div className="flex-1 h-px bg-gray-200"></div>
             </div>
 
-            <button className="w-full border border-gray-300 py-3 rounded-lg text-sm hover:bg-gray-50 transition">
-              Import Existing Wallet
-            </button>
+            <Link to="/login" className="border border-black text-center py-2 rounded-lg px-41 font-semibold">
+              Login
+            </Link>
 
           </div>
 
